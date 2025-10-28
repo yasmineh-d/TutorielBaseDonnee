@@ -1,10 +1,16 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Framework
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <a href="https://laravel.com" target="_blank">
+    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+  <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+  <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+  <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
 ## About Laravel
@@ -43,6 +49,65 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 - **[DevSquad](https://devsquad.com/hire-laravel-developers)**
 - **[Redberry](https://redberry.international/laravel-development)**
 - **[Active Logic](https://activelogic.com)**
+
+## Eloquent Relationships
+
+Laravel Eloquent makes it easy to define and work with relationships between models. Common relationship types are: **One-to-One**, **One-to-Many**, and **Many-to-Many**.
+
+### Quick glossary
+- **hasMany / belongsTo** — one-to-many (e.g. `User` → many `Article`).
+- **belongsToMany** — many-to-many with a pivot table (e.g. `Article` ↔ `Tag`).
+- **Eager loading** — pre-load relations to avoid N+1 queries (`with()` / `withCount()`).
+
+### Practical examples (Blog models)
+
+#### 1) `User` → `Article` (one-to-many)
+```php
+public function articles()
+{
+    return $this->hasMany(Article::class);
+}
+```
+
+#### 2) `Article` → `User` (inverse)
+```php
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
+```
+
+#### 3) `Article` ↔ `Tag` (many-to-many via pivot `article_tag`)
+```php
+public function tags()
+{
+    return $this->belongsToMany(Tag::class);
+}
+```
+
+### Eager loading & counts
+```php
+$articles = App\Models\Article::with(['user','tags'])->get();
+$articles = App\Models\Article::withCount('tags')->get();
+```
+
+### Test in Tinker
+```bash
+php artisan tinker
+>>> $u = App\Models\User::first();
+>>> $u->articles;
+>>> $a = App\Models\Article::first();
+>>> $a->user;
+>>> $a->tags;
+```
+
+### Bonus — nested eager loading example
+```php
+$user = App\Models\User::with('articles.tags')->first();
+foreach ($user->articles as $article) {
+    echo $article->title . ': ' . $article->tags->pluck('name')->join(', ');
+}
+```
 
 ## Contributing
 
